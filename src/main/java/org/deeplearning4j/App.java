@@ -102,7 +102,7 @@ public class App {
                 .iterations(iterations).regularization(true)
                 .l1(1e-1).l2(2e-4).useDropConnect(true)
                 .constrainGradientToUnitNorm(true).miniBatch(true)
-                .optimizationAlgo(OptimizationAlgorithm.CONJUGATE_GRADIENT)
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .list(6)
                 .layer(0, new ConvolutionLayer.Builder(5, 5)
                         .nOut(5).dropOut(0.5)
