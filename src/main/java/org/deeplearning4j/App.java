@@ -70,7 +70,7 @@ public class App {
        System.out.println(csv.split(",").length);
 
         JavaRDD<LabeledPoint> data = MLLibUtil.fromBinary(sc.binaryFiles(s3Bucket + "/*", 8)
-                , new ImageRecordReader(75, 75, labels));
+                , new ImageRecordReader(75, 75, 3,true,labels));
         StandardScaler scaler = new StandardScaler(true,true);
 
         final StandardScalerModel scalarModel = scaler.fit(data.map(new Function<LabeledPoint, Vector>() {
