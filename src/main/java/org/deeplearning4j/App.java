@@ -69,7 +69,7 @@ public class App {
 
        System.out.println(csv.split(",").length);
 
-        JavaRDD<LabeledPoint> data = MLLibUtil.fromBinary(sc.binaryFiles(s3Bucket + "/*", 8)
+        JavaRDD<LabeledPoint> data = MLLibUtil.fromBinary(sc.binaryFiles(s3Bucket + "/*", Runtime.getRuntime().availableProcessors())
                 , new ImageRecordReader(numRows, numColumns, nChannels,true,labels));
         StandardScaler scaler = new StandardScaler(true,true);
 
@@ -154,7 +154,7 @@ public class App {
         // Get evaluation metrics.
         MulticlassMetrics metrics = new MulticlassMetrics(predictionAndLabels.rdd());
         double precision = metrics.fMeasure();
-        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(""));
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("model.bin"));
         Nd4j.write(bos,trainedNetwork.params());
         FileUtils.write(new File("conf.yaml"),trainedNetwork.conf().toYaml());
         System.out.println("F1 = " + precision);
