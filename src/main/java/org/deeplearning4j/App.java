@@ -58,7 +58,7 @@ public class App {
         String pathsFile = "s3n://dl4j-distribution/paths.txt";
         final JavaSparkContext sc = new JavaSparkContext(new SparkConf().setMaster("local[*]").setAppName("scenes"));
         //load the images from the bucket setting the size to 28 x 28
-        final String s3Bucket = "s3n://scenesdata/data/";
+        final String s3Bucket = "file://home/ec2-user/data/";
         //normalize the data to zero mean and unit variance
         String csv = StringUtils.join(",",sc.textFile(pathsFile).map(new Function<String, String>() {
             @Override
