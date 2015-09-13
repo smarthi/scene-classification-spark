@@ -69,7 +69,7 @@ public class App {
 
        System.out.println(csv.split(",").length);
 
-        JavaRDD<LabeledPoint> data = MLLibUtil.fromBinary(sc.binaryFiles(s3Bucket + "/*", Runtime.getRuntime().availableProcessors())
+        JavaRDD<LabeledPoint> data = MLLibUtil.fromBinary(sc.binaryFiles(s3Bucket + "/*")
                 , new ImageRecordReader(numRows, numColumns, nChannels,true,labels));
         StandardScaler scaler = new StandardScaler(true,true);
 
@@ -88,6 +88,7 @@ public class App {
                 return new LabeledPoint(v1.label(), normalized);
             }
         }).cache();
+
 
         //train test split 60/40
         JavaRDD<LabeledPoint>[] trainTestSplit = normalizedData.randomSplit(new double[]{80, 20});
@@ -139,25 +140,39 @@ public class App {
         final SparkDl4jMultiLayer trainedNetworkWrapper = new SparkDl4jMultiLayer(sc.sc(),trainedNetwork);
 
         // Compute raw scores on the test set.
-        JavaRDD<Tuple2<Object, Object>> predictionAndLabels = trainTestSplit[1].map(
-                new Function<LabeledPoint, Tuple2<Object, Object>>() {
-                    public Tuple2<Object, Object> call(LabeledPoint p) {
+        JavaRDD<Tuple2<Double, Double>> predictionAndLabels = trainTestSplit[1].map(
+                new Function<LabeledPoint, Tuple2<Double, Double>>() {
+                    public Tuple2<Double, Double> call(LabeledPoint p) {
                         Vector prediction = trainedNetworkWrapper.predict(p.features());
-                        return new Tuple2<Object, Object>(prediction, p.label());
+                        double max = 0;
+                        double idx = 0;
+                        for(int i = 0; i < prediction.size(); i++) {
+                            if(prediction.apply(i) > max) {
+                                idx = i;
+                                max = prediction.apply(i);
+                            }
+                        }
+
+                        return new Tuple2<>(idx, p.label());
                     }
                 }
         );
 
+        System.out.println("Saving model...");
+
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("model.bin"));
+        Nd4j.write(bos,trainedNetwork.params());
+        FileUtils.write(new File("conf.yaml"),trainedNetwork.conf().toYaml());
 
 
 
         // Get evaluation metrics.
-       /* MulticlassMetrics metrics = new MulticlassMetrics(predictionAndLabels.rdd());
+      /*  MulticlassMetrics metrics = new MulticlassMetrics(predictionAndLabels.rdd());
         double precision = metrics.fMeasure();
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("model.bin"));
         Nd4j.write(bos,trainedNetwork.params());
-        FileUtils.write(new File("conf.yaml"),trainedNetwork.conf().toYaml());
-        System.out.println("F1 = " + precision);*/
+*/       // FileUtils.write(new File("conf.yaml"),trainedNetwork.conf().toYaml());
+        //System.out.println("F1 = " + precision);
 
 
     }
