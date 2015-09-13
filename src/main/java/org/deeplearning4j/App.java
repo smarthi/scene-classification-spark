@@ -90,7 +90,7 @@ public class App {
         }).cache();
 
         //train test split 60/40
-        JavaRDD<LabeledPoint>[] trainTestSplit = normalizedData.randomSplit(new double[]{80, 40});
+        JavaRDD<LabeledPoint>[] trainTestSplit = normalizedData.randomSplit(new double[]{80, 20});
 
 
 
