@@ -18,6 +18,7 @@ import org.deeplearning4j.nn.conf.layers.ConvolutionLayer;
 import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.conf.layers.SubsamplingLayer;
+import org.deeplearning4j.nn.conf.layers.setup.ConvolutionLayerSetup;
 import org.deeplearning4j.nn.conf.preprocessor.CnnToFeedForwardPreProcessor;
 import org.deeplearning4j.nn.conf.preprocessor.FeedForwardToCnnPreProcessor;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
@@ -81,36 +82,43 @@ public class App {
 
 
         //setup the network
-
-        //setup the network
-        //setup the network
-        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
+        MultiLayerConfiguration.Builder builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .batchSize(batchSize)
                 .iterations(iterations).regularization(true)
-                .l2(2e-4).l1(0.1)
-                .constrainGradientToUnitNorm(true)
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .list(3)
+                .l1(1e-1).l2(2e-4).useDropConnect(true)
+                .constrainGradientToUnitNorm(true).miniBatch(true)
+                .optimizationAlgo(OptimizationAlgorithm.CONJUGATE_GRADIENT)
+                .list(6)
                 .layer(0, new ConvolutionLayer.Builder(5, 5)
-                        .nIn(nChannels)
-                        .nOut(6).dropOut(0.5)
+                        .nOut(5).dropOut(0.5)
                         .weightInit(WeightInit.XAVIER)
                         .activation("relu")
                         .build())
+
                 .layer(1, new SubsamplingLayer
                         .Builder(SubsamplingLayer.PoolingType.MAX, new int[]{2, 2})
                         .build())
-                .layer(2, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
-                        .nIn(216)
+                .layer(2, new ConvolutionLayer.Builder(3, 3)
+                        .nOut(10).dropOut(0.5)
+                        .weightInit(WeightInit.XAVIER)
+                        .activation("relu")
+                        .build())
+                .layer(3, new SubsamplingLayer
+                        .Builder(SubsamplingLayer.PoolingType.MAX, new int[]{2, 2})
+                        .build())
+                .layer(4, new DenseLayer.Builder().nOut(100).activation("relu")
+                        .build())
+
+                .layer(5, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
                         .nOut(outputNum)
                         .weightInit(WeightInit.XAVIER)
                         .activation("softmax")
                         .build())
-                .inputPreProcessor(0, new FeedForwardToCnnPreProcessor(numRows, numColumns, nChannels))
-                .inputPreProcessor(2, new CnnToFeedForwardPreProcessor())
-                .backprop(true).pretrain(false)
-                .build();
+                .backprop(true).pretrain(false);
+
+        new ConvolutionLayerSetup(builder,numRows,numColumns,nChannels);
+        MultiLayerConfiguration conf = builder.build();
         //train the network
         SparkDl4jMultiLayer trainLayer = new SparkDl4jMultiLayer(sc.sc(),conf);
         //fit on the training set
