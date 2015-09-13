@@ -152,12 +152,12 @@ public class App {
 
 
         // Get evaluation metrics.
-        MulticlassMetrics metrics = new MulticlassMetrics(predictionAndLabels.rdd());
+       /* MulticlassMetrics metrics = new MulticlassMetrics(predictionAndLabels.rdd());
         double precision = metrics.fMeasure();
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("model.bin"));
         Nd4j.write(bos,trainedNetwork.params());
         FileUtils.write(new File("conf.yaml"),trainedNetwork.conf().toYaml());
-        System.out.println("F1 = " + precision);
+        System.out.println("F1 = " + precision);*/
 
 
     }
