@@ -135,7 +135,7 @@ public class App {
         //train the network
         SparkDl4jMultiLayer trainLayer = new SparkDl4jMultiLayer(sc.sc(),conf);
         //fit on the training set
-        MultiLayerNetwork trainedNetwork = trainLayer.fit(sc, trainTestSplit[0]);
+        MultiLayerNetwork trainedNetwork = trainLayer.fit(trainTestSplit[0],100);
         final SparkDl4jMultiLayer trainedNetworkWrapper = new SparkDl4jMultiLayer(sc.sc(),trainedNetwork);
 
         // Compute raw scores on the test set.
