@@ -58,7 +58,7 @@ public class App {
         String pathsFile = "s3n://dl4j-distribution/paths.txt";
         final JavaSparkContext sc = new JavaSparkContext(new SparkConf().setMaster("local[*]").setAppName("scenes"));
         //load the images from the bucket setting the size to 28 x 28
-        final String s3Bucket = "file://home/ec2-user/data/";
+        final String s3Bucket = "file:///home/ec2-user/data/";
         //normalize the data to zero mean and unit variance
         String csv = StringUtils.join(",",sc.textFile(pathsFile).map(new Function<String, String>() {
             @Override
@@ -69,8 +69,8 @@ public class App {
 
        System.out.println(csv.split(",").length);
 
-        JavaRDD<LabeledPoint> data = MLLibUtil.fromBinary(sc.binaryFiles(csv,8)
-                , new ImageRecordReader(75,75,labels));
+        JavaRDD<LabeledPoint> data = MLLibUtil.fromBinary(sc.binaryFiles(s3Bucket + "/*", 8)
+                , new ImageRecordReader(75, 75, labels));
         StandardScaler scaler = new StandardScaler(true,true);
 
         final StandardScalerModel scalarModel = scaler.fit(data.map(new Function<LabeledPoint, Vector>() {
