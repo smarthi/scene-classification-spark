@@ -2,9 +2,11 @@ package org.deeplearning4j;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.input.PortableDataStream;
 import org.apache.spark.mllib.evaluation.MulticlassMetrics;
 import org.apache.spark.mllib.feature.StandardScaler;
 import org.apache.spark.mllib.feature.StandardScalerModel;
@@ -25,6 +27,7 @@ import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.spark.impl.multilayer.SparkDl4jMultiLayer;
 import org.deeplearning4j.spark.util.MLLibUtil;
+import org.deeplearning4j.util.StringUtils;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import scala.Tuple2;
@@ -32,7 +35,9 @@ import scala.Tuple2;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -50,12 +55,21 @@ public class App {
         int batchSize = 500;
         int iterations = 10;
         int seed = 123;
-
-        JavaSparkContext sc = new JavaSparkContext(new SparkConf().setMaster("local[*]").setAppName("scenes"));
+        String pathsFile = "s3n://dl4j-distribution/paths.txt";
+        final JavaSparkContext sc = new JavaSparkContext(new SparkConf().setMaster("local[*]").setAppName("scenes"));
         //load the images from the bucket setting the size to 28 x 28
-        String s3Bucket = "s3n://scenesdata/data/*";
+        final String s3Bucket = "s3n://scenesdata/data/";
         //normalize the data to zero mean and unit variance
-        JavaRDD<LabeledPoint> data = MLLibUtil.fromBinary(sc.binaryFiles(s3Bucket)
+        String csv = StringUtils.join(",",sc.textFile(pathsFile).map(new Function<String, String>() {
+            @Override
+            public String call(String v1) throws Exception {
+                return s3Bucket + v1;
+            }
+        }).collect());
+
+
+
+        JavaRDD<LabeledPoint> data = MLLibUtil.fromBinary(sc.binaryFiles(csv)
                 , new ImageRecordReader(28,28,labels));
         StandardScaler scaler = new StandardScaler(true,true);
 
