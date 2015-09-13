@@ -67,10 +67,10 @@ public class App {
             }
         }).collect());
 
+       System.out.println(csv.split(",").length);
 
-
-        JavaRDD<LabeledPoint> data = MLLibUtil.fromBinary(sc.binaryFiles(csv)
-                , new ImageRecordReader(28,28,labels));
+        JavaRDD<LabeledPoint> data = MLLibUtil.fromBinary(sc.binaryFiles(csv,8)
+                , new ImageRecordReader(75,75,labels));
         StandardScaler scaler = new StandardScaler(true,true);
 
         final StandardScalerModel scalarModel = scaler.fit(data.map(new Function<LabeledPoint, Vector>() {
@@ -79,7 +79,6 @@ public class App {
                 return v1.features();
             }
         }).rdd());
-
         //get the trained data for the train/test split
         JavaRDD<LabeledPoint> normalizedData = data.map(new Function<LabeledPoint, LabeledPoint>() {
             @Override
