@@ -48,8 +48,8 @@ public class App {
     public static void main( String[] args) throws Exception {
         List<String> labels = Arrays.asList("beach", "desert", "forest", "mountain", "rain", "snow");
 
-        final int numRows = 28;
-        final int numColumns = 28;
+        final int numRows = 75;
+        final int numColumns = 75;
         int nChannels = 3;
         int outputNum = labels.size();
         int batchSize = 500;
@@ -70,7 +70,7 @@ public class App {
        System.out.println(csv.split(",").length);
 
         JavaRDD<LabeledPoint> data = MLLibUtil.fromBinary(sc.binaryFiles(s3Bucket + "/*", 8)
-                , new ImageRecordReader(75, 75, 3,true,labels));
+                , new ImageRecordReader(numRows, numColumns, nChannels,true,labels));
         StandardScaler scaler = new StandardScaler(true,true);
 
         final StandardScalerModel scalarModel = scaler.fit(data.map(new Function<LabeledPoint, Vector>() {
@@ -90,7 +90,7 @@ public class App {
         }).cache();
 
         //train test split 60/40
-        JavaRDD<LabeledPoint>[] trainTestSplit = normalizedData.randomSplit(new double[]{60, 40});
+        JavaRDD<LabeledPoint>[] trainTestSplit = normalizedData.randomSplit(new double[]{80, 40});
 
 
 
