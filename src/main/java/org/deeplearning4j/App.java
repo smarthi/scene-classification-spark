@@ -52,7 +52,7 @@ public class App {
         final int numColumns = 75;
         int nChannels = 3;
         int outputNum = labels.size();
-        int batchSize = 500;
+        int batchSize = 100;
         int iterations = 10;
         int seed = 123;
         String pathsFile = "s3n://dl4j-distribution/paths.txt";
