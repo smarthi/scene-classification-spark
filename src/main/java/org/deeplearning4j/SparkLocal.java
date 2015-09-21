@@ -66,7 +66,6 @@ public class SparkLocal {
 
 
         //train test split 60/40
-        JavaRDD<LabeledPoint>[] trainTestSplit = normalizedData.randomSplit(new double[]{0.8,0.2});
         System.out.println("Setup data with train test split");
 
 
@@ -74,8 +73,7 @@ public class SparkLocal {
         //train the network
         SparkDl4jMultiLayer trainLayer = new SparkDl4jMultiLayer(sc.sc(),conf);
         //fit on the training set
-        MultiLayerNetwork trainedNetwork = trainLayer.fit(trainTestSplit[0],100);
-        final SparkDl4jMultiLayer trainedNetworkWrapper = new SparkDl4jMultiLayer(sc.sc(),trainedNetwork);
+        MultiLayerNetwork trainedNetwork = trainLayer.fit(normalizedData,100);
 
 
         System.out.println("Saving model...");
