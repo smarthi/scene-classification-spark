@@ -41,7 +41,8 @@ import java.util.List;
  */
 public class SparkLocal {
     public static void main( String[] args) throws Exception {
-        final JavaSparkContext sc = new JavaSparkContext(new SparkConf().setMaster("local[*]").setAppName("scenes"));
+        final JavaSparkContext sc = new JavaSparkContext(new SparkConf().setMaster("local[*]").set("spark.driver.maxResultSize","3g")
+                .setAppName("scenes"));
         DataSetSetup setSetup = new DataSetSetup();
         setSetup.setup();
         DataSet next = setSetup.getTrainIter().next();
@@ -58,7 +59,7 @@ public class SparkLocal {
         //System.out.println("Loaded " + next.numExamples() + " with num features " + next.getLabels().columns());
 
 
-        JavaRDD<DataSet> dataSetJavaRDD = sc.parallelize(list,Runtime.getRuntime().availableProcessors() * 100);
+        JavaRDD<DataSet> dataSetJavaRDD = sc.parallelize(list,Runtime.getRuntime().availableProcessors() * 50);
 
 
         //train test split 60/40
