@@ -31,6 +31,7 @@ import scala.Tuple2;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,7 +44,21 @@ public class SparkLocal {
         final JavaSparkContext sc = new JavaSparkContext(new SparkConf().setMaster("local[*]").setAppName("scenes"));
         DataSetSetup setSetup = new DataSetSetup();
         setSetup.setup();
-        JavaRDD<DataSet> dataSetJavaRDD = sc.parallelize(setSetup.getTrainIter().next().asList());
+        DataSet next = setSetup.getTrainIter().next();
+        next.shuffle();
+        List<DataSet> list = new ArrayList<>();
+        List<DataSet> batches = new ArrayList<>();
+        for(int i  = 0; i < next.numExamples(); i++) {
+            list.add(next.get(i));
+            if(list.size() >= 100) {
+                batches.add(DataSet.merge(list,true));
+                list.clear();
+            }
+        }
+        System.out.println("Loaded " + next.numExamples() + " with num features " + next.getLabels().columns());
+
+
+        JavaRDD<DataSet> dataSetJavaRDD = sc.parallelize(batches);
 
 
         //train test split 60/40
