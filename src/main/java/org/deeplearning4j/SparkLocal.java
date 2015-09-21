@@ -52,10 +52,10 @@ public class SparkLocal {
         }
 
         next = null;
-        
 
 
-        System.out.println("Loaded " + next.numExamples() + " with num features " + next.getLabels().columns());
+
+        //System.out.println("Loaded " + next.numExamples() + " with num features " + next.getLabels().columns());
 
 
         JavaRDD<DataSet> dataSetJavaRDD = sc.parallelize(list,Runtime.getRuntime().availableProcessors());
