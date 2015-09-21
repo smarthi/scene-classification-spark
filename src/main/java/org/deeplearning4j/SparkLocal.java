@@ -64,7 +64,7 @@ public class SparkLocal {
 
 
         //train test split 60/40
-        JavaRDD<LabeledPoint>[] trainTestSplit = normalizedData.randomSplit(new double[]{80, 20});
+        JavaRDD<LabeledPoint>[] trainTestSplit = normalizedData.randomSplit(new double[]{0.8,0.2});
 
 
 
