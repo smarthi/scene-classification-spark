@@ -51,7 +51,7 @@ public class SparkLocal {
         for(int i  = 0; i < next.numExamples(); i++) {
             list.add(next.get(i));
             if(list.size() >= 100) {
-                batches.add(DataSet.merge(list,true));
+                batches.add(DataSet.merge(list));
                 list.clear();
             }
         }
