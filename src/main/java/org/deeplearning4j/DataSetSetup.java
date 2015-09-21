@@ -157,7 +157,7 @@ public class DataSetSetup {
 
         scaler.transform(trainingSet);
         scaler.transform(testNext);
-
+        setConf();
 
 
     }

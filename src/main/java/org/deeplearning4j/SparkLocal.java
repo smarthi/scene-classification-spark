@@ -42,7 +42,6 @@ public class SparkLocal {
         final JavaSparkContext sc = new JavaSparkContext(new SparkConf().setMaster("local[*]").setAppName("scenes"));
         DataSetSetup setSetup = new DataSetSetup();
         setSetup.setup();
-        setSetup.getConf();
 
         JavaRDD<LabeledPoint> data = MLLibUtil.fromDataSet(sc,sc.parallelize(setSetup.getTrainIter().next().asList()));
         StandardScaler scaler = new StandardScaler(true,true);
