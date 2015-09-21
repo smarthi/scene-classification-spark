@@ -23,6 +23,7 @@ import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.spark.impl.multilayer.SparkDl4jMultiLayer;
 import org.deeplearning4j.spark.util.MLLibUtil;
 import org.deeplearning4j.util.StringUtils;
+import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import scala.Tuple2;
@@ -42,8 +43,9 @@ public class SparkLocal {
         final JavaSparkContext sc = new JavaSparkContext(new SparkConf().setMaster("local[*]").setAppName("scenes"));
         DataSetSetup setSetup = new DataSetSetup();
         setSetup.setup();
-
-        JavaRDD<LabeledPoint> data = MLLibUtil.fromDataSet(sc,sc.parallelize(setSetup.getTrainIter().next().asList()));
+        List<DataSet> data2 = setSetup.getTrainIter().next().asList();
+        System.out.println("Loaded data of size " + data2.size() + " number features " + data2.get(0).numInputs());
+        JavaRDD<LabeledPoint> data = MLLibUtil.fromDataSet(sc,sc.parallelize(data2));
         StandardScaler scaler = new StandardScaler(true,true);
 
         final StandardScalerModel scalarModel = scaler.fit(data.map(new Function<LabeledPoint, Vector>() {
