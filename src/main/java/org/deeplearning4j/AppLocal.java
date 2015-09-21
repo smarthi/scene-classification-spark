@@ -76,25 +76,29 @@ public class AppLocal {
                 .iterations(iterations).regularization(true)
                 .l1(1e-1).l2(2e-4).useDropConnect(true)
                 .constrainGradientToUnitNorm(true).miniBatch(true)
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .list(5)
+                .optimizationAlgo(OptimizationAlgorithm.CONJUGATE_GRADIENT)
+                .list(6)
                 .layer(0, new ConvolutionLayer.Builder(5, 5)
-                        .nOut(20).dropOut(0.5)
+                        .nOut(5).dropOut(0.5)
                         .weightInit(WeightInit.XAVIER)
                         .activation("relu")
-                        .build())
-                .layer(1, new ConvolutionLayer.Builder(3, 3)
-                        .nOut(6).dropOut(0.5)
-                        .weightInit(WeightInit.XAVIER)
-                        .activation("relu")
-                        .build())
-                .layer(2, new SubsamplingLayer
-                        .Builder(SubsamplingLayer.PoolingType.MAX, new int[]{2, 2})
-                        .build())
-                .layer(3, new DenseLayer.Builder().nOut(1000).activation("relu")
                         .build())
 
-                .layer(4, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
+                .layer(1, new SubsamplingLayer
+                        .Builder(SubsamplingLayer.PoolingType.MAX, new int[]{2, 2})
+                        .build())
+                .layer(2, new ConvolutionLayer.Builder(3, 3)
+                        .nOut(10).dropOut(0.5)
+                        .weightInit(WeightInit.XAVIER)
+                        .activation("relu")
+                        .build())
+                .layer(3, new SubsamplingLayer
+                        .Builder(SubsamplingLayer.PoolingType.MAX, new int[]{2, 2})
+                        .build())
+                .layer(4, new DenseLayer.Builder().nOut(100).activation("relu")
+                        .build())
+
+                .layer(5, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
                         .nOut(outputNum)
                         .weightInit(WeightInit.XAVIER)
                         .activation("softmax")
@@ -155,13 +159,15 @@ public class AppLocal {
             testNext.load(testSet);
         }
 
+        trainingSet.shuffle();
+
+
         scaler.transform(trainingSet);
         scaler.transform(testNext);
         System.out.println("Scaled data");
-        DataSetIterator testIter = new ViewIterator(testNext,100);
         while(trainIter.hasNext()) {
             DataSet next = trainIter.next();
-            System.out.println("Loaded data");
+            System.out.println("Loaded data with label distribution " + next.labelCounts());
             trainedNetwork.fit(next);
             System.out.println("Evaluating so far");
             Evaluation evaluation = new Evaluation(labels.size());
