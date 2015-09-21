@@ -46,10 +46,6 @@ public class DataSetSetup {
     private DataSetIterator trainIter,testIter;
     private MultiLayerConfiguration conf;
 
-    public static void main(String[] args) {
-
-
-    }
 
     public void setConf() {
         //setup the network
@@ -138,7 +134,7 @@ public class DataSetSetup {
             trainingSet.load(training);
         }
 
-        trainIter = new SamplingDataSetIterator(trainingSet,100,10000);
+        trainIter = new SamplingDataSetIterator(trainingSet,10000,10000);
         System.out.println("Loading test data");
         DataSet testNext = null;
         File testSet = new File("test.bin");

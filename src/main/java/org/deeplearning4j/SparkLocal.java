@@ -75,24 +75,6 @@ public class SparkLocal {
         MultiLayerNetwork trainedNetwork = trainLayer.fit(trainTestSplit[0],100);
         final SparkDl4jMultiLayer trainedNetworkWrapper = new SparkDl4jMultiLayer(sc.sc(),trainedNetwork);
 
-        // Compute raw scores on the test set.
-        JavaRDD<Tuple2<Double, Double>> predictionAndLabels = trainTestSplit[1].map(
-                new Function<LabeledPoint, Tuple2<Double, Double>>() {
-                    public Tuple2<Double, Double> call(LabeledPoint p) {
-                        Vector prediction = trainedNetworkWrapper.predict(p.features());
-                        double max = 0;
-                        double idx = 0;
-                        for(int i = 0; i < prediction.size(); i++) {
-                            if(prediction.apply(i) > max) {
-                                idx = i;
-                                max = prediction.apply(i);
-                            }
-                        }
-
-                        return new Tuple2<>(idx, p.label());
-                    }
-                }
-        );
 
         System.out.println("Saving model...");
 
