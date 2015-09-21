@@ -47,18 +47,18 @@ public class SparkLocal {
         DataSet next = setSetup.getTrainIter().next();
         next.shuffle();
         List<DataSet> list = new ArrayList<>();
-        List<DataSet> batches = new ArrayList<>();
         for(int i  = 0; i < next.numExamples(); i++) {
-            list.add(next.get(i));
-            if(list.size() >= 100) {
-                batches.add(DataSet.merge(list));
-                list.clear();
-            }
+            list.add(next.get(i).copy());
         }
+
+        next = null;
+        
+
+
         System.out.println("Loaded " + next.numExamples() + " with num features " + next.getLabels().columns());
 
 
-        JavaRDD<DataSet> dataSetJavaRDD = sc.parallelize(batches,Runtime.getRuntime().availableProcessors());
+        JavaRDD<DataSet> dataSetJavaRDD = sc.parallelize(list,Runtime.getRuntime().availableProcessors());
 
 
         //train test split 60/40
