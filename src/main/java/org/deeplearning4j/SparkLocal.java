@@ -67,7 +67,7 @@ public class SparkLocal {
 
         //train test split 60/40
         JavaRDD<LabeledPoint>[] trainTestSplit = normalizedData.randomSplit(new double[]{0.8,0.2});
-
+        System.out.println("Setup data with train test split");
 
 
         MultiLayerConfiguration conf = setSetup.getConf();
