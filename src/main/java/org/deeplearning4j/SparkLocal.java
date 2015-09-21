@@ -44,7 +44,7 @@ public class SparkLocal {
         setSetup.setup();
         setSetup.getConf();
 
-        JavaRDD<LabeledPoint> data = MLLibUtil.fromDataSet(sc,sc.parallelize(setSetup.getTrainIter().next().asList());
+        JavaRDD<LabeledPoint> data = MLLibUtil.fromDataSet(sc,sc.parallelize(setSetup.getTrainIter().next().asList()));
         StandardScaler scaler = new StandardScaler(true,true);
 
         final StandardScalerModel scalarModel = scaler.fit(data.map(new Function<LabeledPoint, Vector>() {
