@@ -45,7 +45,7 @@ public class SparkLocal {
         setSetup.setup();
         List<DataSet> data2 = setSetup.getTrainIter().next().asList();
         System.out.println("Loaded data of size " + data2.size() + " number features " + data2.get(0).numInputs());
-        JavaRDD<LabeledPoint> data = MLLibUtil.fromDataSet(sc, sc.parallelize(data2));
+        JavaRDD<DataSet> dataSetJavaRDD = sc.parallelize(Arrays.asList(setSetup.getTestIter().next()));
 
 
         //train test split 60/40
@@ -56,7 +56,7 @@ public class SparkLocal {
         //train the network
         SparkDl4jMultiLayer trainLayer = new SparkDl4jMultiLayer(sc.sc(),conf);
         //fit on the training set
-        MultiLayerNetwork trainedNetwork = trainLayer.fit(data,100);
+        MultiLayerNetwork trainedNetwork = trainLayer.fitDataSet(dataSetJavaRDD);
 
 
         System.out.println("Saving model...");
