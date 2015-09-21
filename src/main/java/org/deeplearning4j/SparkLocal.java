@@ -43,9 +43,7 @@ public class SparkLocal {
         final JavaSparkContext sc = new JavaSparkContext(new SparkConf().setMaster("local[*]").setAppName("scenes"));
         DataSetSetup setSetup = new DataSetSetup();
         setSetup.setup();
-        List<DataSet> data2 = setSetup.getTrainIter().next().asList();
-        System.out.println("Loaded data of size " + data2.size() + " number features " + data2.get(0).numInputs());
-        JavaRDD<DataSet> dataSetJavaRDD = sc.parallelize(Arrays.asList(setSetup.getTestIter().next()));
+        JavaRDD<DataSet> dataSetJavaRDD = sc.parallelize(Arrays.asList(setSetup.getTrainIter().next()));
 
 
         //train test split 60/40
