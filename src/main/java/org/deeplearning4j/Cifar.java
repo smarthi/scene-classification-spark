@@ -37,7 +37,7 @@ public class Cifar {
                 .setAppName("scenes"));
         DataSet d = new DataSet();
         d.load(new File("cifar-train.bin"));
-        d = (DataSet) d.getRange(0,10);
+        d = (DataSet) d.getRange(0,10).copy();
         List<DataSet> ciFarList = d.asList();
 
 
