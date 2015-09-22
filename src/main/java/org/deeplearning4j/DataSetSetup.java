@@ -155,7 +155,7 @@ public class DataSetSetup {
         scaler.transform(trainingSet);
         scaler.transform(testNext);
         setConf();
-        testIter = new ListDataSetIterator(testNext.asList(),10000);
+        testIter = new ListDataSetIterator(testNext.asList(),100);
 
     }
 

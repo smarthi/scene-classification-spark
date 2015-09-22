@@ -10,6 +10,7 @@ import org.apache.spark.mllib.feature.StandardScalerModel;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.canova.image.recordreader.ImageRecordReader;
+import org.deeplearning4j.datasets.iterator.DataSetIterator;
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
@@ -78,15 +79,21 @@ public class SparkLocal {
             System.out.println("Saving model...");
 
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("model.bin"));
-            Nd4j.write(bos,trainedNetwork.params());
+            Nd4j.write(bos, trainedNetwork.params());
             bos.flush();
             bos.close();
-            FileUtils.write(new File("conf.yaml"),trainedNetwork.conf().toYaml());
+            FileUtils.write(new File("conf.yaml"), trainedNetwork.conf().toYaml());
 
-
-            DataSet test = setSetup.getTestIter().next();
+            System.out.println("Testing...");
             Evaluation evaluation = new Evaluation();
-            evaluation.eval(test.getLabels(),trainedNetwork.output(test.getFeatureMatrix(),true));
+
+            DataSetIterator testIter23 = (DataSetIterator) setSetup.getTestIter();
+            while(testIter23.hasNext()) {
+                DataSet testNext = testIter23.next();
+                evaluation.eval(testNext.getLabels(),trainedNetwork.output(testNext.getFeatureMatrix(),true));
+            }
+
+            testIter23.reset();
             System.out.println(evaluation.stats());
         }
 
