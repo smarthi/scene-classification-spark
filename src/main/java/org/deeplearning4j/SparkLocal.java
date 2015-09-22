@@ -59,7 +59,7 @@ public class SparkLocal {
         //System.out.println("Loaded " + next.numExamples() + " with num features " + next.getLabels().columns());
 
 
-        JavaRDD<DataSet> dataSetJavaRDD = sc.parallelize(list,list.size() / 100);
+        JavaRDD<DataSet> dataSetJavaRDD = sc.parallelize(list,list.size() / 10);
 
 
         //train test split 60/40
