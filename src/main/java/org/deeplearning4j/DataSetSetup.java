@@ -5,6 +5,7 @@ import org.canova.api.split.FileSplit;
 import org.canova.image.recordreader.ImageRecordReader;
 import org.deeplearning4j.datasets.canova.RecordReaderDataSetIterator;
 import org.deeplearning4j.datasets.iterator.SamplingDataSetIterator;
+import org.deeplearning4j.datasets.iterator.impl.ListDataSetIterator;
 import org.deeplearning4j.datasets.rearrange.LocalUnstructuredDataFormatter;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
@@ -154,7 +155,7 @@ public class DataSetSetup {
         scaler.transform(trainingSet);
         scaler.transform(testNext);
         setConf();
-
+        testIter = new ListDataSetIterator(testNext.asList());
 
     }
 
