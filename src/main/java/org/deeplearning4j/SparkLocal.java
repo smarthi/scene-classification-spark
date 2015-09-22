@@ -10,6 +10,7 @@ import org.apache.spark.mllib.feature.StandardScalerModel;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.canova.image.recordreader.ImageRecordReader;
+import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
@@ -80,6 +81,10 @@ public class SparkLocal {
         FileUtils.write(new File("conf.yaml"),trainedNetwork.conf().toYaml());
 
 
+        DataSet test = setSetup.getTestIter().next();
+        Evaluation evaluation = new Evaluation();
+        evaluation.eval(test.getLabels(),trainedNetwork.output(test.getFeatureMatrix(),true));
+        System.out.println(evaluation.stats());
 
         // Get evaluation metrics.
       /*  MulticlassMetrics metrics = new MulticlassMetrics(predictionAndLabels.rdd());
