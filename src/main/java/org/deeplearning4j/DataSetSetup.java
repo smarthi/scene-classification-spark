@@ -156,6 +156,8 @@ public class DataSetSetup {
         scaler.transform(testNext);
         setConf();
         testIter = new ListDataSetIterator(testNext.asList(),100);
+        //reduce number of samles
+        testIter = new ListDataSetIterator(testIter.next().asList(),100);
 
     }
 
