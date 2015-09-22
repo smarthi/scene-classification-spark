@@ -82,7 +82,7 @@ public class SparkLocal {
             bos.flush();
             bos.close();
             FileUtils.write(new File("conf.yaml"),trainedNetwork.conf().toYaml());
- 
+
 
             DataSet test = setSetup.getTestIter().next();
             Evaluation evaluation = new Evaluation();
