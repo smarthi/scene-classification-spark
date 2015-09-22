@@ -43,7 +43,7 @@ public class Cifar {
         //System.out.println("Loaded " + next.numExamples() + " with num features " + next.getLabels().columns());
 
 
-        JavaRDD<DataSet> dataSetJavaRDD = sc.parallelize(ciFarList,ciFarList.size() / 500);
+        JavaRDD<DataSet> dataSetJavaRDD = sc.parallelize(ciFarList,ciFarList.size() / 100);
 
 
         //train test split 60/40
@@ -102,7 +102,7 @@ public class Cifar {
             bos.close();
             FileUtils.write(new File("conf.yaml"), trainedNetwork.conf().toYaml());
 
-          
+
         }
 
 
