@@ -37,13 +37,14 @@ public class Cifar {
                 .setAppName("scenes"));
         DataSet d = new DataSet();
         d.load(new File("cifar-train.bin"));
+        d = (DataSet) d.getRange(0,10);
         List<DataSet> ciFarList = d.asList();
 
 
         //System.out.println("Loaded " + next.numExamples() + " with num features " + next.getLabels().columns());
 
 
-        JavaRDD<DataSet> dataSetJavaRDD = sc.parallelize(ciFarList,ciFarList.size());
+        JavaRDD<DataSet> dataSetJavaRDD = sc.parallelize(ciFarList, ciFarList.size());
 
 
         //train test split 60/40
