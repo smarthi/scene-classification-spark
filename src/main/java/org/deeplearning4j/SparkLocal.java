@@ -70,21 +70,24 @@ public class SparkLocal {
         MultiLayerConfiguration conf = setSetup.getConf();
         //train the network
         SparkDl4jMultiLayer trainLayer = new SparkDl4jMultiLayer(sc.sc(),conf);
-        //fit on the training set
-        MultiLayerNetwork trainedNetwork = trainLayer.fitDataSet(dataSetJavaRDD);
+        for(int i = 0; i < 5; i++) {
+            //fit on the training set
+            MultiLayerNetwork trainedNetwork = trainLayer.fitDataSet(dataSetJavaRDD);
 
 
-        System.out.println("Saving model...");
+            System.out.println("Saving model...");
 
-        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("model.bin"));
-        Nd4j.write(bos,trainedNetwork.params());
-        FileUtils.write(new File("conf.yaml"),trainedNetwork.conf().toYaml());
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("model.bin"));
+            Nd4j.write(bos,trainedNetwork.params());
+            FileUtils.write(new File("conf.yaml"),trainedNetwork.conf().toYaml());
 
 
-        DataSet test = setSetup.getTestIter().next();
-        Evaluation evaluation = new Evaluation();
-        evaluation.eval(test.getLabels(),trainedNetwork.output(test.getFeatureMatrix(),true));
-        System.out.println(evaluation.stats());
+            DataSet test = setSetup.getTestIter().next();
+            Evaluation evaluation = new Evaluation();
+            evaluation.eval(test.getLabels(),trainedNetwork.output(test.getFeatureMatrix(),true));
+            System.out.println(evaluation.stats());
+        }
+
 
         // Get evaluation metrics.
       /*  MulticlassMetrics metrics = new MulticlassMetrics(predictionAndLabels.rdd());
