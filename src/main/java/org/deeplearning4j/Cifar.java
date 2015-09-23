@@ -85,7 +85,7 @@ public class Cifar {
                         .build())
                 .backprop(true).pretrain(false);
 
-        new ConvolutionLayerSetup(builder,32,32,3)
+        new ConvolutionLayerSetup(builder,32,32,3);
         MultiLayerConfiguration conf = builder.build();
 
         //train the network
