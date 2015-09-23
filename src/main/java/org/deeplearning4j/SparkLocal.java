@@ -31,6 +31,7 @@ import org.nd4j.linalg.lossfunctions.LossFunctions;
 import scala.Tuple2;
 
 import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -79,7 +80,8 @@ public class SparkLocal {
             System.out.println("Saving model...");
 
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("model.bin"));
-            Nd4j.write(bos, trainedNetwork.params());
+            DataOutputStream dos = new DataOutputStream(bos);
+            Nd4j.write(trainedNetwork.params(),dos);
             bos.flush();
             bos.close();
             FileUtils.write(new File("conf.yaml"), trainedNetwork.conf().toYaml());
