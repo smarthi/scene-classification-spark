@@ -48,15 +48,25 @@ public class DataSetSetup {
     private MultiLayerConfiguration conf;
 
 
-    public void setConf() {
+    public static MultiLayerConfiguration convolutionConf() {
+        List<String> labels = new ArrayList<>(Arrays.asList("beach", "desert", "forest", "mountain", "rain", "snow"));
+
+        final int numRows = 75;
+        final int numColumns = 75;
+        int nChannels = 3;
+        int outputNum = labels.size();
+        int batchSize = 1000;
+        int iterations = 1;
+        int seed = 123;
+
         //setup the network
         MultiLayerConfiguration.Builder builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .batchSize(batchSize)
                 .iterations(iterations).regularization(true)
                 .l1(1e-1).l2(2e-4).useDropConnect(true)
-                .constrainGradientToUnitNorm(true).miniBatch(false)
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+                .constrainGradientToUnitNorm(true).miniBatch(true)
+                .optimizationAlgo(OptimizationAlgorithm.LINE_GRADIENT_DESCENT)
                 .list(6)
                 .layer(0, new ConvolutionLayer.Builder(5, 5)
                         .nOut(5).dropOut(0.5)
@@ -68,7 +78,7 @@ public class DataSetSetup {
                         .Builder(SubsamplingLayer.PoolingType.MAX, new int[]{2, 2})
                         .build())
                 .layer(2, new ConvolutionLayer.Builder(3, 3)
-                        .nOut(10).dropOut(0.5)
+                        .nOut(20)
                         .weightInit(WeightInit.XAVIER)
                         .activation("relu")
                         .build())
@@ -86,7 +96,11 @@ public class DataSetSetup {
                 .backprop(true).pretrain(false);
 
         new ConvolutionLayerSetup(builder,numRows,numColumns,nChannels);
-        conf = builder.build();
+        return builder.build();
+    }
+
+    public void setConf() {
+        conf = DataSetSetup.convolutionConf();
     }
 
 
