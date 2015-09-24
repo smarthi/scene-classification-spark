@@ -12,6 +12,7 @@ import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.layers.ConvolutionLayer;
+import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.RBM;
 import org.deeplearning4j.nn.conf.layers.SubsamplingLayer;
 import org.deeplearning4j.nn.conf.layers.setup.ConvolutionLayerSetup;
@@ -56,25 +57,37 @@ public class SparkMnist {
                 .seed(seed)
                 .batchSize(batchSize)
                 .iterations(iterations)
-                .constrainGradientToUnitNorm(true)
+                .constrainGradientToUnitNorm(true).regularization(true)
+                .l2(2e-3)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .list(3)
-                .layer(0, new ConvolutionLayer.Builder(10, 10)
+                .list(6)
+                .layer(0, new ConvolutionLayer.Builder(5, 5)
                         .nIn(nChannels)
-                        .nOut(6)
+                        .nOut(20).dropOut(0.5)
                         .weightInit(WeightInit.XAVIER)
                         .activation("relu")
                         .build())
-                .layer(1, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX, new int[] {2,2})
+                .layer(1, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX, new int[]{2, 2})
                         .build())
-                .layer(2, new org.deeplearning4j.nn.conf.layers.OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
-                        .nIn(150)
+                .layer(2, new ConvolutionLayer.Builder(5, 5)
+                        .nIn(nChannels)
+                        .nOut(50)
+                        .weightInit(WeightInit.XAVIER)
+                        .activation("relu")
+                        .build())
+                .layer(3, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX, new int[] {2,2})
+                        .build())
+                .layer(4, new DenseLayer.Builder().activation("tanh")
+                        .nOut(500).build())
+                .layer(5, new org.deeplearning4j.nn.conf.layers.OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
                         .nOut(outputNum)
                         .weightInit(WeightInit.XAVIER)
                         .activation("softmax")
                         .build())
                 .backprop(true).pretrain(false);
+
         new ConvolutionLayerSetup(builder,28,28,1);
+
 
         MultiLayerConfiguration conf = builder.build();
         MultiLayerNetwork model = new MultiLayerNetwork(conf);
