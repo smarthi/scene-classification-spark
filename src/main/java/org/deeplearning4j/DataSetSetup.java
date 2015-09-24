@@ -5,6 +5,7 @@ import org.canova.api.split.FileSplit;
 import org.canova.image.recordreader.ImageRecordReader;
 import org.deeplearning4j.datasets.canova.RecordReaderDataSetIterator;
 import org.deeplearning4j.datasets.iterator.SamplingDataSetIterator;
+import org.deeplearning4j.datasets.iterator.impl.ListDataSetIterator;
 import org.deeplearning4j.datasets.rearrange.LocalUnstructuredDataFormatter;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
@@ -46,12 +47,18 @@ public class DataSetSetup {
     private DataSetIterator trainIter,testIter;
     private MultiLayerConfiguration conf;
 
-    public static void main(String[] args) {
 
+    public static MultiLayerConfiguration convolutionConf() {
+        List<String> labels = new ArrayList<>(Arrays.asList("beach", "desert", "forest", "mountain", "rain", "snow"));
 
-    }
+        final int numRows = 75;
+        final int numColumns = 75;
+        int nChannels = 3;
+        int outputNum = labels.size();
+        int batchSize = 1000;
+        int iterations = 1;
+        int seed = 123;
 
-    public void setConf() {
         //setup the network
         MultiLayerConfiguration.Builder builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
@@ -59,7 +66,7 @@ public class DataSetSetup {
                 .iterations(iterations).regularization(true)
                 .l1(1e-1).l2(2e-4).useDropConnect(true)
                 .constrainGradientToUnitNorm(true).miniBatch(true)
-                .optimizationAlgo(OptimizationAlgorithm.CONJUGATE_GRADIENT)
+                .optimizationAlgo(OptimizationAlgorithm.LINE_GRADIENT_DESCENT)
                 .list(6)
                 .layer(0, new ConvolutionLayer.Builder(5, 5)
                         .nOut(5).dropOut(0.5)
@@ -71,7 +78,7 @@ public class DataSetSetup {
                         .Builder(SubsamplingLayer.PoolingType.MAX, new int[]{2, 2})
                         .build())
                 .layer(2, new ConvolutionLayer.Builder(3, 3)
-                        .nOut(10).dropOut(0.5)
+                        .nOut(20)
                         .weightInit(WeightInit.XAVIER)
                         .activation("relu")
                         .build())
@@ -89,7 +96,11 @@ public class DataSetSetup {
                 .backprop(true).pretrain(false);
 
         new ConvolutionLayerSetup(builder,numRows,numColumns,nChannels);
-        conf = builder.build();
+        return builder.build();
+    }
+
+    public void setConf() {
+        conf = DataSetSetup.convolutionConf();
     }
 
 
@@ -138,7 +149,7 @@ public class DataSetSetup {
             trainingSet.load(training);
         }
 
-        trainIter = new SamplingDataSetIterator(trainingSet,100,10000);
+        trainIter = new SamplingDataSetIterator(trainingSet,10000,10000);
         System.out.println("Loading test data");
         DataSet testNext = null;
         File testSet = new File("test.bin");
@@ -157,8 +168,10 @@ public class DataSetSetup {
 
         scaler.transform(trainingSet);
         scaler.transform(testNext);
-
-
+        setConf();
+        testIter = new ListDataSetIterator(testNext.asList(),100);
+        //reduce number of samles
+        testIter = new ListDataSetIterator(testIter.next().asList(),100);
 
     }
 

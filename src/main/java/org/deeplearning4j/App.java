@@ -162,6 +162,8 @@ public class App {
 
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("model.bin"));
         Nd4j.write(bos,trainedNetwork.params());
+        bos.flush();
+        bos.close();
         FileUtils.write(new File("conf.yaml"),trainedNetwork.conf().toYaml());
 
 
