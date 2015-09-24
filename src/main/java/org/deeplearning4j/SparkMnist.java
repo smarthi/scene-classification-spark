@@ -46,7 +46,7 @@ public class SparkMnist {
         int outputNum = 10;
         int numSamples = 60000;
         int nChannels = 1;
-        int batchSize = 100;
+        int batchSize = 10;
         int iterations = 10;
         int seed = 123;
         int listenerFreq = batchSize / 5;
@@ -57,13 +57,13 @@ public class SparkMnist {
                 .seed(seed)
                 .batchSize(batchSize)
                 .iterations(iterations)
-                .constrainGradientToUnitNorm(true).regularization(true)
+              .regularization(true)
                 .l2(2e-3)
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+                .optimizationAlgo(OptimizationAlgorithm.LINE_GRADIENT_DESCENT)
                 .list(6)
                 .layer(0, new ConvolutionLayer.Builder(5, 5)
                         .nIn(nChannels)
-                        .nOut(20).dropOut(0.5)
+                        .nOut(20)
                         .weightInit(WeightInit.XAVIER)
                         .activation("relu")
                         .build())
@@ -77,8 +77,8 @@ public class SparkMnist {
                         .build())
                 .layer(3, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX, new int[] {2,2})
                         .build())
-                .layer(4, new DenseLayer.Builder().activation("tanh")
-                        .nOut(500).build())
+                .layer(4, new DenseLayer.Builder().activation("sigmoid")
+                        .nOut(100).build())
                 .layer(5, new org.deeplearning4j.nn.conf.layers.OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
                         .nOut(outputNum)
                         .weightInit(WeightInit.XAVIER)
