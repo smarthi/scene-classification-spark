@@ -39,7 +39,7 @@ public class SparkMnist {
     public static void main(String[] args) throws Exception {
         // set to test mode
         SparkConf sparkConf = new SparkConf().set(SparkDl4jMultiLayer.AVERAGE_EACH_ITERATION, "false")
-                .set("spark.executor.extraJavaOptions", "-Dorg.nd4j.parallel.enabled=false -Dcom.github.fommil.netlib.NativeSystemBLAS.natives=libopenblas.so")
+                .set("spark.executor.extraJavaOptions", "-Dorg.nd4j.parallel.enabled=false -Dcom.github.fommil.netlib.NativeSystemBLAS.natives=/opt/OpenBLAS/lib/libopenblas.so")
                 .setAppName("sparktest");
 
         final int numRows = 28;
