@@ -39,6 +39,7 @@ public class SparkMnist {
     public static void main(String[] args) throws Exception {
         // set to test mode
         SparkConf sparkConf = new SparkConf().set(SparkDl4jMultiLayer.AVERAGE_EACH_ITERATION, "false")
+                .set("spark.executor.extraLibraryPath","")
                 .setAppName("sparktest");
 
         final int numRows = 28;
@@ -46,7 +47,7 @@ public class SparkMnist {
         int outputNum = 10;
         int numSamples = 60000;
         int nChannels = 1;
-        int batchSize = 10;
+        int batchSize = 1000;
         int iterations = 10;
         int seed = 123;
         int listenerFreq = batchSize / 5;
