@@ -29,6 +29,7 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Collections;
@@ -56,7 +57,8 @@ public class SparkMnist {
         int seed = 123;
         int listenerFreq = batchSize / 5;
         java.util.logging.Logger.getLogger(JniLoader.class.getName()).setLevel(Level.ALL);
-
+        String[] javaLibPath = System.getProperty("java.library.path").split(File.pathSeparator);
+        System.out.println("Java lib " + Arrays.toString(javaLibPath));
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         MultiLayerConfiguration.Builder builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
