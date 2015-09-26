@@ -1,5 +1,7 @@
 package org.deeplearning4j;
 
+import com.github.fommil.jni.JniLoader;
+import com.github.fommil.netlib.BLAS;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -30,6 +32,7 @@ import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Collections;
+import java.util.logging.Level;
 
 /**
  * Created by agibsonccc on 9/23/15.
@@ -52,7 +55,7 @@ public class SparkMnist {
         int iterations = 10;
         int seed = 123;
         int listenerFreq = batchSize / 5;
-
+        java.util.logging.Logger.getLogger(JniLoader.class.getName()).setLevel(Level.FINEST);
 
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         MultiLayerConfiguration.Builder builder = new NeuralNetConfiguration.Builder()
