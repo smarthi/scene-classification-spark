@@ -55,7 +55,7 @@ public class SparkMnist {
         int iterations = 10;
         int seed = 123;
         int listenerFreq = batchSize / 5;
-        java.util.logging.Logger.getLogger(JniLoader.class.getName()).setLevel(Level.FINEST);
+        java.util.logging.Logger.getLogger(JniLoader.class.getName()).setLevel(Level.ALL);
 
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         MultiLayerConfiguration.Builder builder = new NeuralNetConfiguration.Builder()
