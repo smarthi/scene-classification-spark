@@ -52,23 +52,20 @@ public class SparkMnist {
         final int numRows = 28;
         final int numColumns = 28;
         int outputNum = 10;
-        int numSamples = 60000;
         int nChannels = 1;
-        int batchSize = 1000;
+        int batchSize = 100;
         int iterations = 10;
         int seed = 123;
         int listenerFreq = batchSize / 5;
-        INDArray arr = Nd4j.create(5).mmul(Nd4j.create(5).transpose());
-        System.out.println("Called native blas");
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         MultiLayerConfiguration.Builder builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .batchSize(batchSize)
                 .iterations(iterations)
-              .regularization(true)
-                .l2(2e-3)
+              .regularization(true).constrainGradientToUnitNorm(true)
+                .l2(2e-45).l1(2e-45)
                 .optimizationAlgo(OptimizationAlgorithm.LINE_GRADIENT_DESCENT)
-                .list(6)
+                .list(5)
                 .layer(0, new ConvolutionLayer.Builder(5, 5)
                         .nIn(nChannels)
                         .nOut(20)
@@ -85,9 +82,8 @@ public class SparkMnist {
                         .build())
                 .layer(3, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX, new int[] {2,2})
                         .build())
-                .layer(4, new DenseLayer.Builder().activation("sigmoid")
-                        .nOut(100).build())
-                .layer(5, new org.deeplearning4j.nn.conf.layers.OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
+
+                .layer(4, new org.deeplearning4j.nn.conf.layers.OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
                         .nOut(outputNum)
                         .weightInit(WeightInit.XAVIER)
                         .activation("softmax")
