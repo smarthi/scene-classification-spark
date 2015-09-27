@@ -24,6 +24,7 @@ import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.spark.canova.RecordReaderFunction;
 import org.deeplearning4j.spark.impl.multilayer.SparkDl4jMultiLayer;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
@@ -57,9 +58,7 @@ public class SparkMnist {
         int iterations = 10;
         int seed = 123;
         int listenerFreq = batchSize / 5;
-        java.util.logging.Logger.getLogger(JniLoader.class.getName()).setLevel(Level.ALL);
-        String[] javaLibPath = System.getProperty("java.library.path").split(File.pathSeparator);
-        System.out.println("Java lib " + Arrays.toString(javaLibPath));
+        INDArray arr = Nd4j.create(5);
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         MultiLayerConfiguration.Builder builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
