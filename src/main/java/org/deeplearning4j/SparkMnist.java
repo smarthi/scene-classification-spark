@@ -59,6 +59,7 @@ public class SparkMnist {
         int seed = 123;
         int listenerFreq = batchSize / 5;
         INDArray arr = Nd4j.create(5).mmul(Nd4j.create(5).transpose());
+        System.out.println("Called native blas");
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         MultiLayerConfiguration.Builder builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
