@@ -64,7 +64,7 @@ public class SparkMnist {
                 .iterations(iterations)
               .regularization(true).constrainGradientToUnitNorm(true)
                 .l2(2e-45).l1(2e-45)
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+                .optimizationAlgo(OptimizationAlgorithm.LINE_GRADIENT_DESCENT)
                 .list(5)
                 .layer(0, new ConvolutionLayer.Builder(5, 5)
                         .nIn(nChannels)
