@@ -63,7 +63,7 @@ public class SparkMnist {
                 .batchSize(batchSize)
                 .iterations(iterations)
               .regularization(true).constrainGradientToUnitNorm(true)
-                .l2(2e-45).l1(2e-45)t
+                .l2(2e-45).l1(2e-45)
                 .optimizationAlgo(OptimizationAlgorithm.LINE_GRADIENT_DESCENT)
                 .list(5)
                 .layer(0, new ConvolutionLayer.Builder(5, 5)
