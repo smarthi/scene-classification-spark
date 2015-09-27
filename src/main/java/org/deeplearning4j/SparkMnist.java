@@ -63,7 +63,7 @@ public class SparkMnist {
                 .batchSize(batchSize)
                 .iterations(iterations)
               .regularization(true).constrainGradientToUnitNorm(true)
-                .l2(2e-45).l1(2e-45)
+                .l2(2e-45).l1(2e-45)t
                 .optimizationAlgo(OptimizationAlgorithm.LINE_GRADIENT_DESCENT)
                 .list(5)
                 .layer(0, new ConvolutionLayer.Builder(5, 5)
@@ -102,13 +102,14 @@ public class SparkMnist {
         SparkDl4jMultiLayer master = new SparkDl4jMultiLayer(sc,conf);
         //number of partitions should be partitioned by batch size
         JavaRDD<String> lines = sc.textFile("s3n://dl4j-distribution/mnist_svmlight.txt",60000 / conf.getConf(0).getBatchSize());
+        JavaRDD<String>[] split = lines.randomSplit(new double[]{0.9,0.1});
         RecordReader svmLight = new SVMLightRecordReader();
         Configuration canovaConf = new Configuration();
         //number of features + label
         canovaConf.setInt(SVMLightRecordReader.NUM_ATTRIBUTES,784);
         svmLight.setConf(canovaConf);
 
-        JavaRDD<DataSet> data = lines.map(new RecordReaderFunction(svmLight, 784, 10));
+        JavaRDD<DataSet> data = split[1].map(new RecordReaderFunction(svmLight, 784, 10));
         MultiLayerNetwork network2 = master.fitDataSet(data);
         FileOutputStream fos  = new FileOutputStream("params.txt");
         DataOutputStream dos = new DataOutputStream(fos);
