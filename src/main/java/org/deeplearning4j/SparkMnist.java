@@ -54,7 +54,7 @@ public class SparkMnist {
         int outputNum = 10;
         int nChannels = 1;
         int batchSize = 100;
-        int iterations = 10;
+        int iterations = 5;
         int seed = 123;
         int listenerFreq = batchSize / 5;
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
@@ -64,7 +64,7 @@ public class SparkMnist {
                 .iterations(iterations)
               .regularization(true).constrainGradientToUnitNorm(true)
                 .l2(2e-45).l1(2e-45)
-                .optimizationAlgo(OptimizationAlgorithm.LINE_GRADIENT_DESCENT)
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .list(5)
                 .layer(0, new ConvolutionLayer.Builder(5, 5)
                         .nIn(nChannels)
