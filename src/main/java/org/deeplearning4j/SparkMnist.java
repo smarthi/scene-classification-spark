@@ -58,7 +58,7 @@ public class SparkMnist {
         int iterations = 10;
         int seed = 123;
         int listenerFreq = batchSize / 5;
-        INDArray arr = Nd4j.create(5);
+        INDArray arr = Nd4j.create(5).mmul(Nd4j.create(5).transpose());
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         MultiLayerConfiguration.Builder builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
@@ -99,6 +99,7 @@ public class SparkMnist {
         MultiLayerConfiguration conf = builder.build();
         MultiLayerNetwork model = new MultiLayerNetwork(conf);
         model.init();
+
 
         System.out.println("Initializing network");
         SparkDl4jMultiLayer master = new SparkDl4jMultiLayer(sc,conf);
