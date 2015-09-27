@@ -101,7 +101,7 @@ public class SparkMnist {
         System.out.println("Initializing network");
         SparkDl4jMultiLayer master = new SparkDl4jMultiLayer(sc,conf);
         //number of partitions should be partitioned by batch size
-        JavaRDD<String> lines = sc.textFile("s3n://dl4j-distribution/mnist_svmlight.txt",60000 / conf.getConf(0).getBatchSize());
+        JavaRDD<String> lines = sc.textFile("s3n://dl4j-distribution/mnist_svmlight.txt",6000/ conf.getConf(0).getBatchSize());
         JavaRDD<String>[] split = lines.randomSplit(new double[]{0.9,0.1});
         RecordReader svmLight = new SVMLightRecordReader();
         Configuration canovaConf = new Configuration();
@@ -122,8 +122,11 @@ public class SparkMnist {
         while(iter.hasNext()) {
             DataSet next = iter.next();
             eval.eval(next.getLabels(),model.output(next.getFeatureMatrix(), true));
+            System.out.println(eval.stats());
+
         }
 
+        System.out.println("Final ");
         System.out.println(eval.stats());
 
     }
