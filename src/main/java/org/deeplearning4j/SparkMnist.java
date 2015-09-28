@@ -46,7 +46,7 @@ public class SparkMnist {
     public static void main(String[] args) throws Exception {
         // set to test mode
         SparkConf sparkConf = new SparkConf().set(SparkDl4jMultiLayer.AVERAGE_EACH_ITERATION, "false")
-                .set("spark.executor.extraJavaOptions", "-Dorg.nd4j.parallel.enabled=false -Dcom.github.fommil.netlib.NativeSystemBLAS.natives=/opt/OpenBLAS/lib/libopenblas.so")
+                .set("spark.executor.extraJavaOptions", "-Dorg.nd4j.parallel.enabled=false")
                 .set("spark.executor.extraLibraryPath","/usr/lib64")
                 .setAppName("sparktest");
 
@@ -55,15 +55,14 @@ public class SparkMnist {
         int outputNum = 10;
         int nChannels = 1;
         int batchSize = 100;
-        int iterations = 5;
+        int iterations = 100;
         int seed = 123;
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         MultiLayerConfiguration.Builder builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .batchSize(batchSize)
                 .iterations(iterations).miniBatch(true)
-                .constrainGradientToUnitNorm(true).regularization(true)
-                .l2(2e-3)
+                .constrainGradientToUnitNorm(true)
                 .optimizationAlgo(OptimizationAlgorithm.LINE_GRADIENT_DESCENT)
                 .list(6)
                 .layer(0, new ConvolutionLayer.Builder(5, 5)
@@ -91,7 +90,7 @@ public class SparkMnist {
                         .build())
                 .backprop(true).pretrain(false);
 
-        new ConvolutionLayerSetup(builder,28,28,1);
+        new ConvolutionLayerSetup(builder,numRows,numRows,nChannels);
 
 
         MultiLayerConfiguration conf = builder.build();
@@ -102,7 +101,7 @@ public class SparkMnist {
         System.out.println("Initializing network");
         SparkDl4jMultiLayer master = new SparkDl4jMultiLayer(sc,conf);
         //number of partitions should be partitioned by batch size
-        JavaRDD<String> lines = sc.textFile("s3n://dl4j-distribution/mnist_svmlight.txt",6000/ conf.getConf(0).getBatchSize());
+        JavaRDD<String> lines = sc.textFile("s3n://dl4j-distribution/mnist_svmlight.txt",60000/ conf.getConf(0).getBatchSize());
         JavaRDD<String>[] split = lines.randomSplit(new double[]{0.9,0.1});
         RecordReader svmLight = new SVMLightRecordReader();
         Configuration canovaConf = new Configuration();
