@@ -109,7 +109,7 @@ public class SparkMnist {
         canovaConf.setInt(SVMLightRecordReader.NUM_ATTRIBUTES,784);
         svmLight.setConf(canovaConf);
 
-        JavaRDD<DataSet> data = split[1].map(new RecordReaderFunction(svmLight, 784, 10));
+        JavaRDD<DataSet> data = split[0].map(new RecordReaderFunction(svmLight, 784, 10));
         MultiLayerNetwork network2 = master.fitDataSet(data);
         FileOutputStream fos  = new FileOutputStream("params.txt");
         DataOutputStream dos = new DataOutputStream(fos);
