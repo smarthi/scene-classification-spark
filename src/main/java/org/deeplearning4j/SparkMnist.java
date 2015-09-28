@@ -54,8 +54,8 @@ public class SparkMnist {
         final int numColumns = 28;
         int outputNum = 10;
         int nChannels = 1;
-        int batchSize = 100;
-        int iterations = 100;
+        int batchSize = 1000;
+        int iterations = 20;
         int seed = 123;
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         MultiLayerConfiguration.Builder builder = new NeuralNetConfiguration.Builder()
