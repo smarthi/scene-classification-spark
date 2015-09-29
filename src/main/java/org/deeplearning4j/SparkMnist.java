@@ -2,6 +2,7 @@ package org.deeplearning4j;
 
 import com.github.fommil.jni.JniLoader;
 import com.github.fommil.netlib.BLAS;
+import org.apache.commons.io.FileUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -129,7 +130,7 @@ public class SparkMnist {
 
         System.out.println("Final ");
         System.out.println(eval.stats());
-
+        FileUtils.write(new File("results.txt"),eval.stats());
     }
 
 }
