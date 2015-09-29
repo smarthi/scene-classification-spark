@@ -60,14 +60,15 @@ public class SparkMnist {
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         MultiLayerConfiguration.Builder builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
-                .batchSize(batchSize)
-                .iterations(iterations).miniBatch(true)
-                .constrainGradientToUnitNorm(true)
-                .optimizationAlgo(OptimizationAlgorithm.LINE_GRADIENT_DESCENT)
+                .batchSize(batchSize).miniBatch(true)
+                .iterations(iterations).useDropConnect(true)
+                .constrainGradientToUnitNorm(true).regularization(true)
+                .l2(2e-3)
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .list(6)
                 .layer(0, new ConvolutionLayer.Builder(5, 5)
                         .nIn(nChannels)
-                        .nOut(20)
+                        .nOut(20).dropOut(0.5)
                         .weightInit(WeightInit.XAVIER)
                         .activation("relu")
                         .build())
@@ -90,10 +91,10 @@ public class SparkMnist {
                         .build())
                 .backprop(true).pretrain(false);
 
-        new ConvolutionLayerSetup(builder,numRows,numRows,nChannels);
-
+        new ConvolutionLayerSetup(builder,28,28,1);
 
         MultiLayerConfiguration conf = builder.build();
+
         MultiLayerNetwork model = new MultiLayerNetwork(conf);
         model.init();
 
