@@ -83,7 +83,7 @@ public class SparkMnist {
         System.out.println("Initializing network");
         SparkDl4jMultiLayer master = new SparkDl4jMultiLayer(sc,conf);
         //number of partitions should be partitioned by batch size
-        JavaRDD<String> lines = sc.textFile("s3n://dl4j-distribution/mnist_svmlight.txt",60000 / conf.getConf(0).getBatchSize());
+        JavaRDD<String> lines = sc.textFile("https://raw.githubusercontent.com/deeplearning4j/Canova/master/canova-api/src/test/resources/mnist_svmlight.txt",60000 / conf.getConf(0).getBatchSize());
         RecordReader svmLight = new SVMLightRecordReader();
         Configuration canovaConf = new Configuration();
         //number of features + label
