@@ -4,8 +4,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.deeplearning4j.datasets.iterator.DataSetIterator;
-import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
@@ -24,7 +22,6 @@ import org.nd4j.linalg.lossfunctions.LossFunctions;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,7 +34,7 @@ public class Cifar {
                 .setAppName("scenes"));
         DataSet d = new DataSet();
         d.load(new File("cifar-train.bin"));
-        d = (DataSet) d.getRange(0,10).copy();
+        d = d.getRange(0,10).copy();
         List<DataSet> ciFarList = d.asList();
 
 

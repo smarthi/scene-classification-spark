@@ -5,9 +5,7 @@ import org.canova.api.records.reader.RecordReader;
 import org.canova.api.split.FileSplit;
 import org.canova.image.recordreader.ImageRecordReader;
 import org.deeplearning4j.datasets.canova.RecordReaderDataSetIterator;
-import org.deeplearning4j.datasets.iterator.DataSetPreProcessor;
 import org.deeplearning4j.datasets.iterator.SamplingDataSetIterator;
-import org.deeplearning4j.datasets.iterator.impl.ListDataSetIterator;
 import org.deeplearning4j.datasets.rearrange.LocalUnstructuredDataFormatter;
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
@@ -23,15 +21,12 @@ import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.dataset.DataSet;
-import org.nd4j.linalg.dataset.MiniBatchFileDataSetIterator;
-import org.nd4j.linalg.dataset.SplitTestAndTrain;
-import org.nd4j.linalg.dataset.ViewIterator;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.dataset.api.iterator.StandardScaler;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -147,7 +142,7 @@ public class AppLocal {
 
         DataSetIterator trainIter = new SamplingDataSetIterator(trainingSet,100,10000);
         System.out.println("Loading test data");
-        DataSet testNext = null;
+        DataSet testNext;
         File testSet = new File("test.bin");
         if(!testSet.exists()) {
             DataSetIterator testIter = new RecordReaderDataSetIterator(trainReader,10000,numColumns * numRows * nChannels,6);

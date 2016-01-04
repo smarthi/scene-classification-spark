@@ -151,7 +151,7 @@ public class DataSetSetup {
 
         trainIter = new SamplingDataSetIterator(trainingSet,10000,10000);
         System.out.println("Loading test data");
-        DataSet testNext = null;
+        DataSet testNext;
         File testSet = new File("test.bin");
         if(!testSet.exists()) {
             testIter = new RecordReaderDataSetIterator(trainReader,10000,numColumns * numRows * nChannels,6);
